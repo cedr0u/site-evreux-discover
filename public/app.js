@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
         maxZoom: 19,
         attribution: 'ArcGIS'});
     
+    var otp = L.tileLayer("https://" + ["a", "b", "c"][new Date() % 3] + ".tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        maxNativeZoom: 17,
+        attribution: 'Kartendaten: © OpenStreetMap-Mitwirkende, SRTM Kartendarstellung: © OpenTopoMap (CC-BY-SA)'});
+    
     const map = L.map('map', {layers: [Satellite]}).setView([49.01977957460211,1.1655593991722224], 14);
     //L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); // Carte de fond OpenStreetMap
     L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -17,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var baseMaps = {
         "Satellite": Satellite,
         "OpenStreetMap": osm,
+        "OpenTopoMap": otp,
     };
 
     // Création de la couche de superposition
@@ -24,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //----------------Markers/Points sur la carte et données d'informations------------------
     // Création d'un groupe de marqueurs
-    const markers = L.markerClusterGroup();
+    const markers = L.layerGroup();
 
     // Création/initialisation des tableaux de marqueurs par catégorie
     var artPlace = [];
@@ -39,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var sportPlace = [];
     var theatrePlace = [];
     var toilettesPlace = [];
+    var markersPersonnels = [];
 
     // Ajout de quelques marqueurs avec des popups et liens
     toilettesPlace.push(L.marker([49.024707, 1.168751], {dataName: 'Mairie de Gravigny'}).bindPopup('<a href="https://www.gravigny.fr/">Mairie de Gravigny</a>').setIcon(new L.Icon({iconUrl: 'icon/mairie.png', iconSize: [64, 64]})));
@@ -59,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var sportPlaceLayer = L.layerGroup(sportPlace);
     var theatrePlaceLayer = L.layerGroup(theatrePlace);
     var toilettesPlaceLayer = L.layerGroup(toilettesPlace);
+    var markersPersonnelsLayer = L.layerGroup(markersPersonnels);
 
     // Ajout des groupes de couches à l'objet overlayMaps
     var overlayMaps = {
@@ -75,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Sports/J.O 2024" : sportPlaceLayer,
         "Lieux culturels" : theatrePlaceLayer,
         "Toilettes publiques" : toilettesPlaceLayer,
+        "Markers personnels" : markersPersonnelsLayer,
     };
     // Affichage de tout les markers de base
     map.addLayer(artPlaceLayer);
@@ -89,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
     map.addLayer(sportPlaceLayer);
     map.addLayer(theatrePlaceLayer);
     map.addLayer(toilettesPlaceLayer);
+    map.addLayer(markersPersonnelsLayer);
 
     // Ajout du groupe de marqueurs à la carte
     map.addLayer(markers);
@@ -238,6 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //----------------Plugin sidebar------------------
     var sidebar = L.control.sidebar('sidebar', {position: 'left'}).addTo(map);
 
+    //~~~Menu listes markers~~~
     // Define the markers by category
     const markersByCategory = {
         "Lieux d'art": artPlaceLayer,
@@ -252,6 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Sports/J.O 2024": sportPlaceLayer,
         "Lieux culturels": theatrePlaceLayer,
         "Toilettes publiques": toilettesPlaceLayer,
+        "Markers personnels" : markersPersonnelsLayer,
     };
     
     // Create the markers menu
@@ -292,4 +304,66 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+    //~~~Menu ajouts markers~~~
+    // Add an event listener to the form
+    document.getElementById('addMarkerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+      
+        // Get the form elements
+        var iconSelect = document.getElementById('iconSelect');
+        var coordinatesInput = document.getElementById('coordinates');
+        var dataNameInput = document.getElementById('dataName');
+        var popupTextInput = document.getElementById('popupText');
+        var popupUrlInput = document.getElementById('popupUrl');
+      
+        // Get the selected values
+        var icon = iconSelect.value;
+        var coordinates = coordinatesInput.value.split(',');
+        var dataName = dataNameInput.value;
+        var popupText = popupTextInput.value;
+        var popupUrl = popupUrlInput.value;
+      
+        // Create a new marker with the selected values
+        var marker = L.marker(coordinates, {
+          icon: new L.Icon({
+            iconUrl: icon,
+            iconSize: [64, 64]
+          }),
+          dataName: dataName
+        });
+      
+        // Add a popup to the marker with the selected text and URL
+        marker.bindPopup('<a href="' + popupUrl + '">' + popupText + '</a>');
+      
+        // Add the marker to the corresponding array based on its category
+        markersPersonnels.push(marker);
+      
+        // Add the marker to the map
+        markers.addLayer(marker);
+        markersPersonnelsLayer.addLayer(marker);
+
+        // Mettre à jour la liste des marqueurs dans la sidebar
+        createMarkerMenu(markersByCategory);
+            
+        // Reset the form
+        coordinatesInput.value = '';
+        dataNameInput.value = '';
+        popupTextInput.value = '';
+        popupUrlInput.value = '';
+      });
+    
+    // Sélectionnez l'élément HTML pour la prévisualisation de l'icône
+    const iconPreview = document.getElementById("iconPreview");
+
+    // Ajoutez un gestionnaire d'événement pour le changement de sélection de l'élément <select>
+    document.getElementById("iconSelect").addEventListener("change", () => {
+    // Récupérez l'URL de l'icône sélectionnée
+    const iconUrl = document.getElementById("iconSelect").value;
+    
+    // Mettez à jour l'arrière-plan de l'élément de prévisualisation avec l'URL de l'icône
+    iconPreview.style.backgroundImage = `url(${iconUrl})`;
+    });
+
+    // Déclenchez le gestionnaire d'événement pour afficher l'icône par défaut
+    document.getElementById("iconSelect").dispatchEvent(new Event("change"));
 });
