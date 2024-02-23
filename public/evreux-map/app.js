@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const tailleIconInput = document.getElementById('tailleIconInput');
-    const tailleIcon = getUrlParameter('tailleIcon') || 55;
+    const tailleIcon = getUrlParameter('tailleIcon') || 45;
     tailleIconInput.value = tailleIcon;
 
     document.getElementById('tailleIconForm').addEventListener('submit', function(event) {
@@ -69,6 +69,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ajout de quelques marqueurs avec des popups et liens
     // -markers de lieux 3D-
     lieux3D.push(L.marker([49.02475043512676, 1.1662588992127314], {dataName: '3D Usine Nétreville Philips (tunnel)'}).bindPopup('<a href="gaussian_splatting/urbex_usine_netreville/tunnel/index.html">3D Usine Nétreville Philips (tunnel)</a>').setIcon(new L.Icon({iconUrl: 'icon/3d.png', iconSize: [tailleIcon, tailleIcon]})));
+    lieux3D.push(L.marker([49.0253145910712, 1.1656430126264936], {dataName: '3D Usine Nétreville Philips (chemin)'}).bindPopup('<a href="gaussian_splatting/urbex_usine_netreville/chemin/index.html">3D Usine Nétreville Philips (chemin)</a>').setIcon(new L.Icon({iconUrl: 'icon/3d.png', iconSize: [tailleIcon, tailleIcon]})));
+    lieux3D.push(L.marker([49.02646565678856, 1.1512659263095817], {dataName: '3D Place de la mairie et théatre'}).bindPopup('<a href="gaussian_splatting/mairie/place/index.html">3D Place de la mairie et théatre</a>').setIcon(new L.Icon({iconUrl: 'icon/3d.png', iconSize: [tailleIcon, tailleIcon]})));
 
     // -markers de Lieux d'art-
     // -markers de Points d'eau-
@@ -82,6 +84,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // -markers de Lieux historique-
     // -markers de Lieux d'information-
     // -markers de Jardin-
+    jardinPlace.push(L.marker([49.020153916417975, 1.1506960668954485], {dataName: 'Jardin botanique'}).bindPopup('<a href="https://evreux.fr/">Jardin botanique</a>').setIcon(new L.Icon({iconUrl: 'icon/jardin.png', iconSize: [tailleIcon, tailleIcon]})));
+    jardinPlace.push(L.marker([49.029349452451, 1.169738748304181], {dataName: 'Jardin de Netreville'}).bindPopup('<a href="https://evreux.fr/">Jardin de Netreville</a>').setIcon(new L.Icon({iconUrl: 'icon/jardin.png', iconSize: [tailleIcon, tailleIcon]})));
+    jardinPlace.push(L.marker([49.00479770199866, 1.150179333701478], {dataName: 'Jardin Secret de Pan'}).bindPopup('<a href="https://www.lejardinsecretdepan.fr/">Jardin Secret de Pan</a>').setIcon(new L.Icon({iconUrl: 'icon/jardin.png', iconSize: [tailleIcon, tailleIcon]})));
+    jardinPlace.push(L.marker([49.02976854096607, 1.1335508803899024], {dataName: 'Jardin des coteaux de Saint-Michel de F.Simonaire'}).bindPopup('<a href="https://www.lejardinsecretdepan.fr/">Jardin des coteaux de Saint-Michel de F.Simonaire</a>').setIcon(new L.Icon({iconUrl: 'icon/jardin.png', iconSize: [tailleIcon, tailleIcon]})));
+
     // -markers de Point de vue-
     // -markers de Mairie-
     mairiePlace.push(L.marker([49.02701441558723, 1.1514063806067707], {dataName: 'Mairie d\'Évreux'}).bindPopup('<a href="https://evreux.fr/">Mairie d\'Évreux</a>').setIcon(new L.Icon({iconUrl: 'icon/mairie.png', iconSize: [tailleIcon, tailleIcon]})));
@@ -135,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
     sportPlace.push(L.marker([49.0221629331427, 1.1273308731985334], {dataName: 'Piscine Jean Bouin'}).bindPopup('<a href="#">Piscine Jean Bouin</a>').setIcon(new L.Icon({iconUrl: 'icon/sport.png', iconSize: [tailleIcon, tailleIcon]})));
     
     // -markers de Lieux culturels-
+    //serre du jardin botanique
     // -markers de Toilettes publiques-
     toilettesPlace.push(L.marker([49.020380367794814, 1.1493014814471363], {dataName: 'Toilettes public jardin public'}).bindPopup('<a href="#">Toilettes public jardin public</a>').setIcon(new L.Icon({iconUrl: 'icon/toilettes.png', iconSize: [tailleIcon, tailleIcon]})));
     toilettesPlace.push(L.marker([49.0249926407912, 1.15051691430553], {dataName: 'Toilettes public jardin cathédrale'}).bindPopup('<a href="#">Toilettes public jardin cathédrale</a>').setIcon(new L.Icon({iconUrl: 'icon/toilettes.png', iconSize: [tailleIcon, tailleIcon]})));
@@ -399,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
             listItem.classList.add('marker-item');
             listItem.textContent = marker.options.dataName;
             listItem.addEventListener('click', function () {
-                map.setView(marker.getLatLng(), 17);
+                map.setView(marker.getLatLng(), 18);
             });
             markersList.appendChild(listItem);
             }
